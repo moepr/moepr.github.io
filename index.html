@@ -1,6 +1,2555 @@
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-  <title>测试</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MLVPN 中文文档</title>
+<style>
+/* ===== 全局重置 ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===== 变量 ===== */
+:root {
+  --sidebar-width: 280px;
+  --header-height: 60px;
+  --header-bg: #16213e;
+  --sidebar-bg: #1a1a2e;
+  --sidebar-text: #c4c4cc;
+  --sidebar-active: #0f3460;
+  --sidebar-hover: #242442;
+  --content-bg: #ffffff;
+  --text-color: #333;
+  --text-secondary: #555;
+  --border-color: #e0e0e0;
+  --code-bg: #282c34;
+  --code-text: #abb2bf;
+  --accent: #e94560;
+  --link-color: #0969da;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-color);
+  background: var(--content-bg);
+}
+
+/* ===== 顶部标题栏 ===== */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  background: var(--header-bg);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.header h1 {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+.header .subtitle {
+  font-size: 13px;
+  color: #8899aa;
+  margin-left: 16px;
+}
+
+/* ===== 汉堡菜单按钮（移动端） ===== */
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 1100;
+  background: var(--sidebar-bg);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* ===== 侧边栏导航 ===== */
+.sidebar {
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar-width);
+  background: var(--sidebar-bg);
+  overflow-y: auto;
+  z-index: 900;
+  padding: 12px 0;
+  transition: transform 0.3s ease;
+}
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+
+.nav-group-title {
+  color: #7a8ba0;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 16px 20px 6px;
+}
+.nav-item {
+  display: block;
+  padding: 9px 20px 9px 28px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border-left: 3px solid transparent;
+}
+.nav-item:hover {
+  background: var(--sidebar-hover);
+  color: #fff;
+}
+.nav-item.active {
+  background: var(--sidebar-active);
+  color: #fff;
+  border-left-color: var(--accent);
+  font-weight: 500;
+}
+.nav-item.nav-top {
+  padding-left: 20px;
+  font-weight: 600;
+  font-size: 15px;
+  color: #e0e0e0;
+}
+
+/* ===== 内容区 ===== */
+.content {
+  margin-left: var(--sidebar-width);
+  margin-top: var(--header-height);
+  padding: 32px 40px 60px;
+  max-width: 940px;
+  min-height: calc(100vh - var(--header-height));
+}
+
+/* ===== 隐藏所有 section，只显示当前的 ===== */
+.doc-section { display: none; }
+.doc-section.active { display: block; }
+
+/* ===== 排版 ===== */
+.doc-section h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border-color);
+  color: #1a1a2e;
+}
+.doc-section h2 {
+  font-size: 21px;
+  font-weight: 600;
+  margin-top: 36px;
+  margin-bottom: 12px;
+  color: #222;
+}
+.doc-section h3 {
+  font-size: 17px;
+  font-weight: 600;
+  margin-top: 28px;
+  margin-bottom: 10px;
+  color: #333;
+}
+.doc-section h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 22px;
+  margin-bottom: 8px;
+  color: #444;
+}
+.doc-section p {
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+}
+.doc-section ul, .doc-section ol {
+  margin: 8px 0 16px 24px;
+}
+.doc-section li {
+  margin-bottom: 5px;
+  color: var(--text-secondary);
+}
+.doc-section a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+.doc-section a:hover { text-decoration: underline; }
+.doc-section strong { color: var(--text-color); }
+.doc-section hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 28px 0;
+}
+
+/* ===== 代码块 ===== */
+pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  border-radius: 8px;
+  padding: 16px 20px;
+  overflow-x: auto;
+  margin: 12px 0 20px;
+  font-family: "SFMono-Regular", "Fira Code", Consolas, "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  tab-size: 4;
+}
+code {
+  font-family: "SFMono-Regular", "Fira Code", Consolas, "Courier New", monospace;
+  font-size: 13px;
+}
+:not(pre) > code {
+  background: #f0f2f5;
+  color: #d63384;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+/* ===== 表格 ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0 20px;
+  font-size: 14px;
+}
+th, td {
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+th {
+  background: #f5f6f8;
+  font-weight: 600;
+  color: #333;
+}
+tr:nth-child(even) { background: #fafbfc; }
+tr:hover { background: #f0f4ff; }
+
+/* ===== 警告/提示框 ===== */
+.tip, .warning, .note {
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 12px 0 16px;
+  font-size: 14px;
+}
+.tip { background: #e8f5e9; border-left: 4px solid #4caf50; color: #2e7d32; }
+.warning { background: #fff3e0; border-left: 4px solid #ff9800; color: #e65100; }
+.note { background: #e3f2fd; border-left: 4px solid #2196f3; color: #1565c0; }
+
+/* ===== 首页导航链接卡片 ===== */
+.nav-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+.nav-card {
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #fff;
+}
+.nav-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(233,69,96,0.12);
+  transform: translateY(-2px);
+}
+.nav-card h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: #1a1a2e;
+}
+.nav-card p {
+  margin: 0;
+  font-size: 13px;
+  color: #888;
+}
+
+/* ===== ASCII art 美化 ===== */
+.ascii-art pre {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #56b6c2;
+}
+
+/* ===== 移动端响应 ===== */
+@media (max-width: 768px) {
+  .menu-toggle { display: block; }
+  .header { padding-left: 54px; }
+  .header .subtitle { display: none; }
+  .sidebar {
+    transform: translateX(-100%);
+    top: var(--header-height);
+    width: 260px;
+  }
+  .sidebar.open { transform: translateX(0); box-shadow: 4px 0 12px rgba(0,0,0,0.4); }
+  .content { margin-left: 0; padding: 24px 16px 60px; }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 800; }
+  .overlay.open { display: block; }
+}
+</style>
 </head>
-<body>......</nody>
+<body>
+
+<!-- ===== 汉堡菜单按钮 ===== -->
+<button class="menu-toggle" onclick="toggleSidebar()" aria-label="菜单">&#9776;</button>
+
+<!-- ===== 遮罩层 ===== -->
+<div class="overlay" onclick="toggleSidebar()"></div>
+
+<!-- ===== 顶部标题栏 ===== -->
+<header class="header">
+  <h1>MLVPN 中文文档</h1>
+  <span class="subtitle">多链路虚拟专用网络</span>
+</header>
+
+<!-- ===== 左侧导航栏 ===== -->
+<nav class="sidebar" id="sidebar">
+  <a class="nav-item nav-top" onclick="showSection('index')">首页</a>
+
+  <div class="nav-group-title">用户指南</div>
+  <a class="nav-item" onclick="showSection('what_is_mlvpn')">什么是 mlvpn</a>
+  <a class="nav-item" onclick="showSection('getting_started')">快速开始</a>
+  <a class="nav-item" onclick="showSection('security')">安全性</a>
+  <a class="nav-item" onclick="showSection('faq')">常见问题</a>
+
+  <div class="nav-group-title">示例场景</div>
+  <a class="nav-item" onclick="showSection('linux_example')">Linux 双 ADSL 聚合</a>
+  <a class="nav-item" onclick="showSection('filters_guide')">过滤功能</a>
+
+  <div class="nav-group-title">开发者指南</div>
+  <a class="nav-item" onclick="showSection('debian_packaging')">Debian 打包</a>
+  <a class="nav-item" onclick="showSection('openbsd')">OpenBSD 构建</a>
+
+  <div class="nav-group-title">附录</div>
+  <a class="nav-item" onclick="showSection('multi_broadband')">多条宽带聚合与中转机方案</a>
+  <a class="nav-item" onclick="showSection('build_guide')">编译安装完全指南</a>
+</nav>
+
+<!-- ===== 右侧内容区 ===== -->
+<main class="content" id="content">
+
+<!-- ============================================================ -->
+<!-- section: index 首页/概述 -->
+<!-- ============================================================ -->
+<div class="doc-section active" id="index">
+  <h1>MLVPN 中文文档</h1>
+  <div class="warning">
+    以下所有命令均需以 root 身份执行（已省略 sudo 前缀），请确保您有足够的权限。
+  </div>
+  <p style="font-size:16px; color:#555; margin-top:4px;">
+    原文来源：<a href="https://mlvpn.readthedocs.io/en/latest/" target="_blank">https://mlvpn.readthedocs.io/en/latest/</a>
+  </p>
+  <p>
+    MLVPN 是开源软件，基于 BSD 许可证发布。<br>
+    源代码托管在 GitHub：<a href="https://github.com/zehome/MLVPN/" target="_blank">https://github.com/zehome/MLVPN/</a>
+  </p>
+  <hr>
+  <p>
+    <strong>MLVPN</strong>（Multi-Link Virtual Public Network）是一款多链路虚拟专用网络软件，能够：
+  </p>
+  <ul>
+    <li>聚合多条互联网连接的带宽</li>
+    <li>自动故障转移，无需中断 TCP 连接</li>
+    <li>使用 libsodium 进行加密和认证</li>
+  </ul>
+
+  <h2>文档导航</h2>
+  <div class="nav-cards">
+    <div class="nav-card" onclick="showSection('what_is_mlvpn')">
+      <h3>什么是 mlvpn</h3>
+      <p>mlvpn 的功能特性、局限性以及非对等链路说明。</p>
+    </div>
+    <div class="nav-card" onclick="showSection('getting_started')">
+      <h3>快速开始</h3>
+      <p>各平台安装方法、配置文件说明和基本使用。</p>
+    </div>
+    <div class="nav-card" onclick="showSection('security')">
+      <h3>安全性</h3>
+      <p>权限分离、密码学原理和安全机制详解。</p>
+    </div>
+    <div class="nav-card" onclick="showSection('faq')">
+      <h3>常见问题</h3>
+      <p>费用、故障排查和常见错误解决方法。</p>
+    </div>
+    <div class="nav-card" onclick="showSection('linux_example')">
+      <h3>Linux 双 ADSL 聚合</h3>
+      <p>完整的 Linux 双 ADSL 上行链路聚合与故障转移指南。</p>
+    </div>
+    <div class="nav-card" onclick="showSection('filters_guide')">
+      <h3>过滤功能</h3>
+      <p>使用 BPF 表达式配置流量过滤器，优化 VoIP 等应用。</p>
+    </div>
+    <div class="nav-card" onclick="showSection('debian_packaging')">
+      <h3>Debian 打包</h3>
+      <p>构建 Debian 软件包的完整流程。</p>
+    </div>
+    <div class="nav-card" onclick="showSection('openbsd')">
+      <h3>OpenBSD 构建</h3>
+      <p>在 OpenBSD 系统上构建和安装 mlvpn。</p>
+    </div>
+    <div class="nav-card" onclick="showSection('multi_broadband')">
+      <h3>多条宽带聚合与中转机方案</h3>
+      <p>多条宽带聚合、中转机转发方案和源码确认的关键特性。</p>
+    </div>
+    <div class="nav-card" onclick="showSection('build_guide')">
+      <h3>编译安装完全指南</h3>
+      <p>从编译到运行的完整指南，包含配置参数速查表和性能调优建议。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- section: what_is_mlvpn 什么是mlvpn -->
+<!-- ============================================================ -->
+<div class="doc-section" id="what_is_mlvpn">
+  <h1>什么是 mlvpn</h1>
+  <p>
+    mlvpn 是一款类似于 OpenVPN 的软件，能够在两台计算机之间创建网络隧道。
+  </p>
+  <p>
+    mlvpn 封装网络数据包，使用 UDP 协议并加密后通过互联网发送到另一个位置。
+  </p>
+  <p>
+    mlvpn 的主要用途是创建绑定的/聚合的网络链接（链路聚合），以便利用多条链路的带宽。
+  </p>
+  <p>
+    此外，mlvpn 也可以作为普通的安全隧道守护进程使用，能够处理故障转移场景。
+  </p>
+
+  <h2>功能特性</h2>
+  <ul>
+    <li>多条互联网连接的带宽聚合</li>
+    <li>自动故障转移，无需更改 IP 地址或中断 TCP 连接</li>
+    <li>使用 libsodium 进行连接加密和认证</li>
+    <li>热配置重载（通过发送 SIGHUP 信号）</li>
+    <li>可脚本化监控</li>
+    <li>通过 UNIX 套接字或 TCP/HTTP 套接字进行远程监控（JSON API）</li>
+  </ul>
+
+  <h2>局限性</h2>
+  <p>（暂无已知局限性文档）</p>
+
+  <h2>非对等链路（3G/4G 与 *DSL 或 WIFI 与 *DSL）</h2>
+  <p>
+    如果启用了重排序功能，mlvpn 可以聚合差异很大的链路。
+  </p>
+  <p>
+    如果您有一条高延迟的 3G/4G 链路和一条 DSL 连接，请将 <code>reorder_buffer_size</code> 调整到合理值以获得良好性能。
+  </p>
+  <div class="warning">
+    请注意，创建的聚合链路将具有所有链路中最差的延迟，即 3G/4G 链路的延迟。
+  </div>
+  <p>
+    重排序很重要，因为数据包在每条路径上的发送速度不同。数据包会乱序到达，这会严重影响 TCP 性能。如果不启用重排序，您将只能获得最慢链路的带宽。
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<!-- section: getting_started 快速开始 -->
+<!-- ============================================================ -->
+<div class="doc-section" id="getting_started">
+  <h1>mlvpn 快速开始</h1>
+
+  <h2>简介</h2>
+  <p>如果您还没有阅读，请先查看"什么是 mlvpn"。</p>
+
+  <h2>安装</h2>
+
+  <h3>Debian / Ubuntu</h3>
+<pre>
+apt-get update
+apt-get install build-essential make autoconf automake \
+    libev-dev libsodium-dev pkg-config
+</pre>
+  <div class="note">注意：MLVPN 目前没有官方 Debian 软件源，需要从源码编译安装。</div>
+
+  <h3>OpenBSD</h3>
+  <p>请参考 mlvpn 仓库中的 <code>README.OpenBSD</code> 文件了解 OpenBSD 构建说明。</p>
+
+  <h3>FreeBSD</h3>
+<pre>
+pkg install git libev libsodium
+git clone --branch freebsd https://github.com/zehome/MLVPN mlvpn
+cd mlvpn
+make
+</pre>
+  <div class="warning">注意：此移植版本不经常测试，可能会出现问题。</div>
+
+  <h3>从源码安装</h3>
+  <p>请参考 mlvpn 仓库中的 <code>README.md</code> 文件了解源码构建说明。</p>
+
+  <h2>配置</h2>
+  <p>mlvpn 为每条隧道使用两个配置文件。</p>
+
+  <h3>mlvpn.conf</h3>
+  <p>
+    <code>mlvpn.conf(5)</code> 是一个 INI 风格的配置文件。用于设置接口名称、密钥、多条链路的网络配置以及第二个配置脚本的路径。
+  </p>
+  <div class="tip">提示：使用以下命令查看手册页：<code>man mlvpn.conf</code></div>
+
+  <h3>mlvpn_updown.sh</h3>
+  <p>
+    <code>mlvpn_updown.sh</code> 是 mlvpn 在状态发生变化时调用的脚本。
+  </p>
+  <p>
+    例如，当 mlvpn 启动且链路被激活时，mlvpn_updown.sh 会被调用以启动隧道设备并准备通信。
+  </p>
+
+  <h2>使用 ps 检查 mlvpn 状态</h2>
+  <p>您可以随时使用标准的 Unix 命令 <code>ps</code> 来检查 mlvpn 的运行状态。</p>
+  <p>
+    mlvpn 会生成两个进程。一个是以 root 权限运行的特权进程，其名称中包含 <code>[priv]</code>。
+    另一个是以您选择的用户身份运行的进程（通过 <code>mlvpn --user</code> 参数指定）。
+  </p>
+  <p>示例：</p>
+<pre>
+root 30222 30221 0 23:17 pts/8 00:00:00 mlvpn: adsl3g [priv]
+ed  30223 30222 0 23:17 pts/8 00:00:00 mlvpn: adsl3g !3g @adsl
+</pre>
+  <p>此输出表示隧道 3g 已断开，而 adsl 已连接。</p>
+
+  <h3>隧道前缀说明</h3>
+  <table>
+    <thead><tr><th>前缀</th><th>含义</th></tr></thead>
+    <tbody>
+      <tr><td><code>!</code></td><td>已断开</td></tr>
+      <tr><td><code>@</code></td><td>已连接且运行中</td></tr>
+      <tr><td><code>~</code></td><td>已连接但丢包严重（超过配置的阈值）</td></tr>
+    </tbody>
+  </table>
+
+  <h2>热重载 mlvpn 配置</h2>
+  <p>
+    mlvpn 支持热配置重载。您可以通过向任意进程发送 SIGHUP 信号来重新加载配置。
+  </p>
+<pre>
+kill -HUP $(pidof mlvpn) # 或者使用 pkill -HUP mlvpn
+</pre>
+  <div class="warning">警告：热重载配置会强制所有已建立的链路断开并重新连接。</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- section: security 安全性 -->
+<!-- ============================================================ -->
+<div class="doc-section" id="security">
+  <h1>mlvpn 中的安全性</h1>
+  <p>
+    安全性是 mlvpn 项目的重中之重。
+  </p>
+  <p>
+    mlvpn 尽最大努力保护您的系统和数据，采用权限分离、强密码学和持续集成。
+  </p>
+
+  <h2>权限分离</h2>
+  <p>
+    mlvpn 需要访问内核来创建隧道设备并配置该设备（需要 root 权限）。
+  </p>
+  <p>
+    为了限制特权范围，mlvpn 会生成一个名为 <code>[priv]</code> 的小进程，然后再生成另一个进程。
+  </p>
+  <p>
+    <strong>priv 进程</strong>只执行需要特权的任务：
+  </p>
+  <ul>
+    <li>隧道接口创建</li>
+    <li>隧道接口配置</li>
+    <li>打开 mlvpn 配置文件</li>
+    <li>名称解析（需要在 chroot 之外运行）</li>
+  </ul>
+  <p>
+    另一个进程以非特权用户身份运行（通常是 <code>_mlvpn</code> 或 <code>mlvpn</code>），在 chroot 环境中运行。它处理所有对外暴露的繁重工作。
+  </p>
+  <p>
+    这与 OpenSSH 使用的技术相同。
+  </p>
+
+  <h2>密码学</h2>
+  <p>
+    mlvpn 使用 libsodium 满足所有密码学需求。
+  </p>
+  <p>
+    特别是，mlvpn 使用密钥认证加密。
+  </p>
+  <p>
+    密码学用于两个目的：
+  </p>
+  <ul>
+    <li><strong>认证</strong></li>
+    <li><strong>数据保护</strong></li>
+  </ul>
+
+  <h3>认证</h3>
+  <p>
+    mlvpn 使用一个非常简单的协议来确保只有双方共享相同密钥时才会通信。
+  </p>
+  <p>
+    密钥以明文形式存储在 mlvpn 配置文件中。
+  </p>
+  <div class="warning">
+    此配置文件必须由 root 拥有，并设置权限为 0600，以防止其他用户读取/写入。
+  </div>
+  <p>
+    mlvpn 发送的每个控制数据包都会被双方加密和认证。
+  </p>
+  <p>
+    认证使用 <strong>Poly1305 MAC</strong> 完成。
+  </p>
+
+  <h3>加密</h3>
+  <p>
+    数据包也可以加密/认证，但可以通过 <code>cleartext_data</code> 配置标志禁用。
+  </p>
+  <p>
+    如果您的 CPU 资源有限，这会很有用。
+  </p>
+  <p>
+    如果您的数据反正要发送到互联网，使用 mlvpn 再加密一次没有太大意义。（加密 SSH 或 HTTPS 连接不会带来太多收益）
+  </p>
+  <p>
+    加密使用 <strong>XSalsa20</strong> 算法。
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<!-- section: faq 常见问题 -->
+<!-- ============================================================ -->
+<div class="doc-section" id="faq">
+  <h1>常见问题</h1>
+
+  <h2>mlvpn 的费用</h2>
+  <p>免费。mlvpn 基于开源 BSD 许可证发布。</p>
+
+  <h2>故障排查</h2>
+
+  <h3>mlvpn 无法启动</h3>
+  <p>以调试模式手动启动 mlvpn：</p>
+<pre>
+mlvpn --user _mlvpn -c /etc/mlvpn.conf --debug -Dprotocol -v
+</pre>
+  <p>检查权限：</p>
+<pre>
+chmod 0600 /etc/mlvpn/mlvpn.conf
+chmod 0700 /etc/mlvpn/mlvpn_updown.sh
+chown root /etc/mlvpn/mlvpn.conf /etc/mlvpn/mlvpn_updown.sh
+</pre>
+
+  <h3>mlvpn 无法创建隧道接口</h3>
+  <p>请参考"mlvpn 无法启动"章节中的排查步骤。</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- section: linux_example Linux双ADSL聚合 -->
+<!-- ============================================================ -->
+<div class="doc-section" id="linux_example">
+  <h1>Linux 双 ADSL 上行链路聚合与故障转移</h1>
+
+  <h2>简介</h2>
+  <p>
+    本简短指南将帮助您配置 Linux 的策略路由，以便同时自动使用两条 ADSL 链路。
+  </p>
+
+  <h2>示例场景</h2>
+  <div class="ascii-art">
+<pre>
+        +------------------------------------------+
+        |           MLVPN 服务器                    |
+        |       128.128.128.128/32                 |
+        |     100Mbps 快速互联网                   |
+        +----------+-----------+-------------------+
+                   |           |
+                   |           |
+           +-------+---+ +----+--------+
+           |  ADSL 1   | |   ADSL 2    |
+           | 192.168.1.1| | 192.168.2.1|
+           +------+----+ +-----+------+
+                  |              |
+           +------+----+ +-----+------+
+           | MLVPN 客户端| | MLVPN 客户端|
+           | 路由器      | | 路由器      |
+           +------+----+ +-----+------+
+                  |              |
+                  +------+------+
+                         |
+                  +------+------+
+                  |   局域网    |
+                  |192.168.0.0/24|
+                  +-------------+
+</pre>
+  </div>
+  <p>在此配置中，我们有以下设备：</p>
+  <ul>
+    <li><strong>MLVPN 服务器</strong>：拥有快速互联网连接（100Mbps），公网 IP 地址：128.128.128.128/32</li>
+    <li><strong>ADSL 1 路由器</strong>：本地 IP 地址 192.168.1.1/24</li>
+    <li><strong>ADSL 2 路由器</strong>：本地 IP 地址 192.168.2.1/24</li>
+    <li><strong>局域网</strong>：192.168.0.0/24</li>
+    <li><strong>MLVPN 客户端路由器</strong>：多个私有 IP 地址</li>
+  </ul>
+
+  <h2>测试基本配置</h2>
+  <p>查看当前路由表：</p>
+<pre>
+ip route show
+</pre>
+  <p>测试到服务器的连通性：</p>
+<pre>
+ping -c 3 192.168.1.1
+ping -c 3 192.168.2.1
+ping -c 3 128.128.128.128
+</pre>
+
+  <h2>配置源路由</h2>
+
+  <h3>概念</h3>
+  <p>
+    源路由意味着内核不仅根据数据包的目标地址，还会根据数据包的来源地址来决定路由。
+  </p>
+  <p>
+    在我们的场景中，从 MLVPN 客户端发出的数据包，源地址可能是 192.168.1.x（ADSL 1）或 192.168.2.x（ADSL 2）。
+    源路由确保从 ADSL 1 发出的数据包通过 ADSL 1 的网关返回，从 ADSL 2 发出的数据包通过 ADSL 2 的网关返回。
+  </p>
+
+  <h3>开始配置</h3>
+  <p>首先，定义路由表名称。编辑 <code>/etc/iproute2/rt_tables</code>：</p>
+<pre>
+# echo "1 adsl1" >> /etc/iproute2/rt_tables
+# echo "2 adsl2" >> /etc/iproute2/rt_tables
+</pre>
+  <p>为每个 ADSL 连接配置路由表：</p>
+<pre>
+# ADSL 1 路由表
+ip route add default via 192.168.1.1 dev eth1 table adsl1
+ip rule add from 192.168.1.0/24 table adsl1
+
+# ADSL 2 路由表
+ip route add default via 192.168.2.1 dev eth2 table adsl2
+ip rule add from 192.168.2.0/24 table adsl2
+</pre>
+
+  <h3>测试</h3>
+<pre>
+ip rule list
+ip route show table adsl1
+ip route show table adsl2
+</pre>
+
+  <h3>开机自动启动脚本</h3>
+  <p>创建 <code>/usr/local/sbin/source_routing</code>：</p>
+<pre>
+#!/bin/bash
+
+# 定义变量
+ADSL1_GW="192.168.1.1"
+ADSL2_GW="192.168.2.1"
+ADSL1_IF="eth1"
+ADSL2_IF="eth2"
+ADSL1_NET="192.168.1.0/24"
+ADSL2_NET="192.168.2.0/24"
+
+# 清空旧规则
+ip rule flush
+ip route flush table adsl1
+ip route flush table adsl2
+
+# 添加路由表
+ip route add default via $ADSL1_GW dev $ADSL1_IF table adsl1
+ip route add default via $ADSL2_GW dev $ADSL2_IF table adsl2
+
+# 添加策略规则
+ip rule add from $ADSL1_NET table adsl1
+ip rule add from $ADSL2_NET table adsl2
+
+# 刷新路由缓存
+ip route flush cache
+
+echo "源路由配置完成"
+</pre>
+  <p>设置执行权限并链接到启动目录：</p>
+<pre>
+chmod +x /usr/local/sbin/source_routing
+</pre>
+
+  <h2>配置 MLVPN</h2>
+
+  <h3>客户端配置</h3>
+  <p>mlvpn0.conf：</p>
+<pre>
+[general]
+name = mlvpn0
+tunnel_password = "your_secure_password_here"
+password = "your_client_password_here"
+debug = 0
+
+[adsl1]
+host = 128.128.128.128
+bindhost = 192.168.1.2
+bindport = 65530
+
+[adsl2]
+host = 128.128.128.128
+bindhost = 192.168.2.2
+bindport = 65531
+</pre>
+  <p>mlvpn0_updown.sh：</p>
+<pre>
+#!/bin/bash
+# MLVPN 状态变化回调脚本
+# 被 mlvpn 调用，参数为隧道名称和状态
+
+TUNNEL=$1
+STATUS=$2
+
+if [ "$STATUS" = "up" ]; then
+    echo "隧道 $TUNNEL 已激活"
+    # 启动隧道接口
+    ifconfig $TUNNEL 10.0.0.2 netmask 255.255.255.252 pointopoint 10.0.0.1 up
+    # 添加路由
+    ip route add 10.0.0.0/30 dev $TUNNEL 2>/dev/null
+    # 重新加载源路由配置
+    /usr/local/sbin/source_routing
+elif [ "$STATUS" = "down" ]; then
+    echo "隧道 $TUNNEL 已断开"
+fi
+</pre>
+
+  <h3>服务端配置</h3>
+  <p>mlvpn0.conf：</p>
+<pre>
+[general]
+name = mlvpn0
+tunnel_password = "your_secure_password_here"
+mode = server
+listen = 0.0.0.0:65530
+debug = 0
+
+# 管理接口
+[status]
+bindhost = 127.0.0.1
+bindport = 4001
+</pre>
+  <p>mlvpn0_updown.sh：</p>
+<pre>
+#!/bin/bash
+# MLVPN 服务端状态变化回调脚本
+
+TUNNEL=$1
+STATUS=$2
+
+if [ "$STATUS" = "up" ]; then
+    echo "客户端隧道 $TUNNEL 已连接"
+    # 配置隧道接口
+    ifconfig $TUNNEL 10.0.0.1 netmask 255.255.255.252 pointopoint 10.0.0.2 up
+    # 启用 IP 转发
+    echo 1 > /proc/sys/net/ipv4/ip_forward
+    # 添加 NAT 规则
+    iptables -t nat -A POSTROUTING -s 10.0.0.0/30 -o eth0 -j MASQUERADE
+    iptables -A FORWARD -i $TUNNEL -o eth0 -j ACCEPT
+    iptables -A FORWARD -i eth0 -o $TUNNEL -m state --state RELATED,ESTABLISHED -j ACCEPT
+elif [ "$STATUS" = "down" ]; then
+    echo "客户端隧道 $TUNNEL 已断开"
+    # 清理 NAT 规则
+    iptables -t nat -D POSTROUTING -s 10.0.0.0/30 -o eth0 -j MASQUERADE 2>/dev/null
+    iptables -D FORWARD -i $TUNNEL -o eth0 -j ACCEPT 2>/dev/null
+    iptables -D FORWARD -i eth0 -o $TUNNEL -m state --state RELATED,ESTABLISHED -j ACCEPT 2>/dev/null
+fi
+</pre>
+
+  <h2>测试</h2>
+  <p>在服务端配置防火墙允许 MLVPN 流量：</p>
+<pre>
+# 允许 MLVPN 端口
+iptables -A INPUT -p udp --dport 65530 -j ACCEPT
+iptables -A INPUT -p udp --dport 65531 -j ACCEPT
+
+# 保存规则
+iptables-save > /etc/iptables.rules
+</pre>
+  <p>启动 MLVPN 服务端和客户端：</p>
+<pre>
+# 服务端
+mlvpn --user mlvpn -c /etc/mlvpn/mlvpn0.conf -Dprotocol -v
+
+# 客户端
+mlvpn --user mlvpn -c /etc/mlvpn/mlvpn0.conf -Dprotocol -v
+</pre>
+  <p>验证聚合是否生效：</p>
+<pre>
+# 查看隧道状态
+ps aux | grep mlvpn
+
+# 测试带宽
+iperf -c 128.128.128.128 -t 10
+
+# 查看路由
+ip rule list
+</pre>
+</div>
+
+<!-- ============================================================ -->
+<!-- section: filters_guide 过滤功能 -->
+<!-- ============================================================ -->
+<div class="doc-section" id="filters_guide">
+  <h1>过滤功能</h1>
+  <p>
+    mlvpn 中的过滤系统可以在聚合场景下使用。
+  </p>
+  <p>
+    某些协议会因数据包乱序或丢包而受到严重影响，例如 VoIP 系统。
+  </p>
+  <p>
+    为了解决这个问题，mlvpn 包含了一个叫做"过滤器"的系统。
+  </p>
+  <p>
+    在 <code>mlvpn.conf</code> 中，<code>[filters]</code> 段定义了匹配表达式的静态路径。
+  </p>
+  <p>
+    表达式使用标准的 <strong>BPF 表达式</strong>（与 tcpdump 或其他 libpcap 程序中使用的一样）。
+  </p>
+  <div class="note">
+    过滤器对顺序敏感。
+  </div>
+
+  <h2>启用重排序与 VoIP 的 ADSL 和 SDSL</h2>
+  <p>
+    在此场景中，我们希望聚合所有协议的流量，除了 SIP UDP 端口 5060。
+  </p>
+
+  <h3>mlvpn.conf</h3>
+<pre>
+[general]
+name = mlvpn0
+tunnel_password = "secure_password"
+password = "link_password"
+debug = 0
+reorder_buffer_size = 64
+
+[link_adsl]
+host = remote.example.com
+bindhost = 0.0.0.0
+bindport = 65530
+
+[link_sdsl]
+host = remote.example.com
+bindhost = 0.0.0.0
+bindport = 65531
+
+[filters]
+# 将 SIP UDP 5060 流量固定到 SDSL 链路
+sdsl = udp port 5060
+# 其余流量可使用任一链路（默认）
+</pre>
+
+  <h3>说明</h3>
+  <p>
+    此配置在所有链路正常时，会将匹配 <code>"udp port 5060"</code> BPF 表达式的数据包仅发送到 <code>sdsl</code> 链路。
+  </p>
+  <p>
+    如果 <code>sdsl</code> 链路不可用，则会选择第二个匹配的接口。
+  </p>
+  <p>
+    过滤器采用<strong>排他性首匹配</strong>机制。这意味着如果数据包匹配某个表达式，且该接口已准备好接收数据，过滤将停止，数据包将被发送。
+  </p>
+  <p>
+    在该场景中，顺序非常重要，以便您选择首选路径。
+  </p>
+
+  <h2>BPF 表达式示例</h2>
+  <table>
+    <thead><tr><th>表达式</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td><code>udp port 5060</code></td><td>匹配 SIP 协议（UDP 5060 端口）</td></tr>
+      <tr><td><code>tcp port 80</code></td><td>匹配 HTTP 流量</td></tr>
+      <tr><td><code>host 10.0.0.1</code></td><td>匹配特定主机的流量</td></tr>
+      <tr><td><code>net 192.168.0.0/16</code></td><td>匹配特定网段的流量</td></tr>
+      <tr><td><code>udp and portrange 10000-20000</code></td><td>匹配指定范围的 UDP 端口</td></tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    提示：您可以在命令行中使用 <code>tcpdump -i any -d &lt;表达式&gt;</code> 来验证 BPF 表达式是否正确。
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- section: debian_packaging Debian打包 -->
+<!-- ============================================================ -->
+<div class="doc-section" id="debian_packaging">
+  <h1>构建 Debian 软件包</h1>
+
+  <h2>依赖要求</h2>
+<pre>
+apt-get install pbuilder cowbuilder git-buildpackage
+</pre>
+
+  <h2>准备构建环境</h2>
+
+  <h3>配置 pbuilder</h3>
+  <p>创建或编辑 <code>~/.pbuilderrc</code>：</p>
+<pre>
+# 基础系统
+BASETARFILE=""
+BASESERIES="wheezy"
+
+# 镜像
+MIRRORSITE="http://deb.debian.org/debian"
+
+# 构建目录
+BUILDRESULT="/var/cache/pbuilder/result/"
+BUILDPLACE="/var/cache/pbuilder/build/"
+
+# 组件
+COMPONENTS="main contrib non-free"
+
+# 环境变量
+export DEB_BUILD_OPTIONS="nocheck"
+</pre>
+
+  <h3>为 pbuilder 生成基础镜像</h3>
+<pre>
+for arch in amd64; do
+  DIST=wheezy pbuilder create --architecture $arch \
+    --mirror http://deb.debian.org/debian \
+    --debootstrapopts --variant=minbase
+done
+</pre>
+  <p>更新基础镜像：</p>
+<pre>
+for arch in amd64; do
+  DIST=wheezy pbuilder update --architecture $arch \
+    --mirror http://deb.debian.org/debian
+done
+</pre>
+
+  <h2>构建软件包</h2>
+
+  <h3>libsodium13（适用于 wheezy）</h3>
+<pre>
+# 克隆源码
+git clone https://github.com/zehome/libsodium.git
+cd libsodium
+git checkout 1.0.11
+
+# 构建
+pdebuild --architecture amd64 -- --basetgz /var/cache/pbuilder/wheezy_amd64.tgz
+
+# 查看结果
+ls /var/cache/pbuilder/result/
+</pre>
+
+  <h3>mlvpn</h3>
+<pre>
+# 克隆源码
+git clone https://github.com/zehome/MLVPN.git
+cd MLVPN
+
+# 安装构建依赖
+apt-get build-dep .
+
+# 构建源码包
+git-buildpackage --git-builder="pbuilder --git-builder=pdebuild --git-dist=wheezy"
+
+# 或者手动构建
+dpkg-buildpackage -us -uc -b
+
+# 安装
+dpkg -i ../mlvpn_*.deb
+</pre>
+
+  <div class="tip">
+    提示：构建出的 .deb 文件将位于上级目录中。
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- section: openbsd OpenBSD构建 -->
+<!-- ============================================================ -->
+<div class="doc-section" id="openbsd">
+  <h1>在 OpenBSD 上构建 mlvpn</h1>
+
+  <h2>自 OpenBSD 5.9 起的安装</h2>
+  <p>
+    自 OpenBSD 5.9 起，mlvpn 已成为 OpenBSD 移植系统的一部分。您可以直接以软件包形式安装：
+  </p>
+<pre>
+pkg_add mlvpn
+</pre>
+
+  <h2>安装依赖</h2>
+<pre>
+pkg_add git autoconf automake libev libsodium
+</pre>
+
+  <h2>构建 mlvpn</h2>
+  <p>如果需要从源码构建最新版本：</p>
+<pre>
+# 获取源码
+git clone https://github.com/zehome/MLVPN.git
+cd MLVPN
+
+# 生成构建脚本
+./autogen.sh
+
+# 配置
+./configure --prefix=/usr/local
+
+# 编译
+make
+
+# 安装
+make install
+
+# 创建运行用户（可选）
+useradd -r -s /sbin/nologin -d /nonexistent mlvpn
+
+# 创建配置目录
+mkdir -p /etc/mlvpn
+chown root:mlvpn /etc/mlvpn
+chmod 750 /etc/mlvpn
+</pre>
+
+  <h2>配置</h2>
+  <p>
+    OpenBSD 的示例配置文件位于 <code>/usr/local/share/examples/mlvpn/</code> 目录中。
+  </p>
+  <p>配置文件示例：</p>
+<pre>
+[general]
+name = mlvpn0
+tunnel_password = "your_tunnel_password"
+password = "your_link_password"
+debug = 0
+
+[link1]
+host = remote.server.com
+bindhost = 0.0.0.0
+bindport = 65530
+
+[status]
+bindhost = 127.0.0.1
+bindport = 4001
+</pre>
+
+  <h2>使用 rc.d 启动</h2>
+  <p>mlvpn 提供了 OpenBSD 的 rc.d 服务脚本：</p>
+<pre>
+# 启用并启动服务
+rcctl enable mlvpn
+rcctl start mlvpn
+
+# 查看状态
+rcctl check mlvpn
+</pre>
+
+  <div class="note">
+    注意：OpenBSD 上的 MLVPN 移植可能与上游版本略有差异。请参考移植目录中的 README 文件了解具体差异。
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- section: multi_broadband 多条宽带聚合与中转机方案 -->
+<!-- ============================================================ -->
+<div class="doc-section" id="multi_broadband">
+  <h1>MLVPN 多条宽带聚合与中转机方案</h1>
+  <hr>
+
+  <h2>核心原理</h2>
+  <p>MLVPN 通过创建<strong>多条独立隧道（rtun）</strong>来聚合带宽。每条宽带对应一条隧道，所有隧道的数据汇聚到同一个虚拟接口上。</p>
+
+  <h3>源码确认的关键特性</h3>
+  <table>
+    <thead><tr><th>特性</th><th>说明</th><th>源码依据</th></tr></thead>
+    <tbody>
+      <tr><td>隧道数量无上限</td><td>理论上可以添加任意数量的隧道段</td><td><code>src/mlvpn.c</code> 中使用链表 <code>rtunhead</code> 管理隧道</td></tr>
+      <tr><td>bindhost 非必需</td><td>客户端模式下 <code>bindhost</code> 默认为 NULL，自动绑定 0.0.0.0</td><td><code>src/config.c</code> 中 <code>_conf_set_str_from_conf(... "bindhost" ... NULL)</code></td></tr>
+      <tr><td>每个隧道完全独立</td><td>每条隧道有独立的 remotehost、remoteport、bindhost、bindport</td><td><code>src/config.c</code> 中逐段解析各隧道配置</td></tr>
+      <tr><td>负载均衡算法</td><td>使用加权轮询（Weighted Round-Robin），基于 bandwidth_upload 权重</td><td><code>src/mlvpn.c</code> 中 <code>mlvpn_rtun_recalc_weight()</code></td></tr>
+      <tr><td>故障转移机制</td><td>单条隧道断开不影响其他隧道，系统自动从聚合中移除故障链路</td><td><code>src/mlvpn.c</code> 中 <code>mlvpn_rtun_status_down()</code></td></tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <h2>方案一：直连多条宽带</h2>
+
+  <h3>网络拓扑</h3>
+  <div class="ascii-art">
+<pre>
+MLVPN 客户端
+├── 宽带1 (192.168.1.x) ──> MLVPN 服务器:5080
+├── 宽带2 (192.168.2.x) ──> MLVPN 服务器:5081
+└── 宽带3 (192.168.3.x) ──> MLVPN 服务器:5082
+</pre>
+  </div>
+
+  <h3>客户端配置</h3>
+<pre>
+[general]
+mode = "client"
+interface_name = "mlvpn0"
+password = "统一密码"
+reorder_buffer_size = 64
+loss_tolerence = 50
+statuscommand = "/etc/mlvpn/mlvpn_updown.sh"
+
+# 宽带1
+[broadband1]
+bindhost = "192.168.1.100"    # 可选，明确指定出口
+remotehost = "服务器公网IP"
+remoteport = 5080
+bandwidth_upload = 10240       # 10Mbps 上行
+
+# 宽带2
+[broadband2]
+bindhost = "192.168.2.100"    # 可选
+remotehost = "服务器公网IP"
+remoteport = 5081
+bandwidth_upload = 20480       # 20Mbps 上行
+
+# 宽带3
+[broadband3]
+bindhost = "192.168.3.100"    # 可选
+remotehost = "服务器公网IP"
+remoteport = 5082
+bandwidth_upload = 51200       # 50Mbps 上行
+</pre>
+
+  <h3>服务端配置</h3>
+<pre>
+[general]
+mode = "server"
+interface_name = "mlvpn0"
+password = "同一密码"
+reorder_buffer_size = 64
+loss_tolerence = 50
+statuscommand = "/etc/mlvpn/mlvpn_updown.sh"
+
+[broadband1]
+bindport = 5080
+
+[broadband2]
+bindport = 5081
+
+[broadband3]
+bindport = 5082
+</pre>
+
+  <hr>
+
+  <h2>方案二：通过中转机聚合</h2>
+
+  <h3>场景说明</h3>
+  <p>当你的服务器没有公网 IP，或者需要通过中转机优化路由时，可以使用两台中转机分别转发不同端口的流量。</p>
+
+  <h3>网络拓扑</h3>
+  <div class="ascii-art">
+<pre>
+MLVPN 客户端
+├── 宽带1 ──> 中转机A (公网IP-A:5080) ──> MLVPN 服务器:5080
+└── 宽带2 ──> 中转机B (公网IP-B:5081) ──> MLVPN 服务器:5081
+</pre>
+  </div>
+
+  <div class="note">
+    <strong>源码确认：remotehost 支持不同 IP</strong><br>
+    从 <code>src/config.c</code> 可以确认，每个隧道段的 <code>remotehost</code> 和 <code>remoteport</code> 是独立解析的。客户端模式下，<code>remotehost</code> 是必需参数，但可以为每个隧道配置不同的 IP。
+  </div>
+
+  <h3>客户端配置（中转机方案）</h3>
+<pre>
+[general]
+mode = "client"
+interface_name = "mlvpn0"
+password = "统一密码"
+reorder_buffer_size = 64
+loss_tolerence = 50
+statuscommand = "/etc/mlvpn/mlvpn_updown.sh"
+
+# 隧道1 → 走中转机A
+[tunnel_via_A]
+bindhost = "192.168.1.100"    # 宽带1的出口IP
+remotehost = "中转机A的公网IP"  # ← 不同的中转机IP
+remoteport = 5080
+
+# 隧道2 → 走中转机B
+[tunnel_via_B]
+bindhost = "192.168.2.100"    # 宽带2的出口IP
+remotehost = "中转机B的公网IP"  # ← 不同的中转机IP
+remoteport = 5081
+</pre>
+
+  <h3>服务端配置</h3>
+<pre>
+[general]
+mode = "server"
+interface_name = "mlvpn0"
+password = "同一密码"
+reorder_buffer_size = 64
+loss_tolerence = 50
+statuscommand = "/etc/mlvpn/mlvpn_updown.sh"
+
+[tunnel_via_A]
+bindport = 5080
+
+[tunnel_via_B]
+bindport = 5081
+</pre>
+
+  <h3>中转机配置</h3>
+  <p><strong>中转机A 的 iptables 规则：</strong></p>
+<pre>
+# 将 5080 端口的流量转发到 MLVPN 服务器
+iptables -t nat -A PREROUTING -p udp --dport 5080 -j DNAT --to-destination MLVPN服务器IP:5080
+iptables -t nat -A POSTROUTING -p udp -d MLVPN服务器IP --dport 5080 -j MASQUERADE
+</pre>
+  <p><strong>中转机B 的 iptables 规则：</strong></p>
+<pre>
+# 将 5081 端口的流量转发到 MLVPN 服务器
+iptables -t nat -A PREROUTING -p udp --dport 5081 -j DNAT --to-destination MLVPN服务器IP:5081
+iptables -t nat -A POSTROUTING -p udp -d MLVPN服务器IP --dport 5081 -j MASQUERADE
+</pre>
+
+  <hr>
+
+  <h2>关键注意事项</h2>
+
+  <h3>1. bindhost 的作用</h3>
+  <table>
+    <thead><tr><th>场景</th><th>是否需要 bindhost</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>单网卡</td><td>不需要</td><td>默认绑定 0.0.0.0</td></tr>
+      <tr><td>多网卡，每条宽带对应不同网卡</td><td><strong>建议填写</strong></td><td>确保流量从正确的网卡出去</td></tr>
+      <tr><td>所有宽带共用一个网关</td><td>不需要</td><td>系统路由会自动处理</td></tr>
+    </tbody>
+  </table>
+  <div class="tip">
+    <strong>源码确认</strong>：<code>bindhost</code> 在客户端模式下是可选的，默认为 NULL（即 0.0.0.0）。
+  </div>
+
+  <h3>2. remotehost 的独立性</h3>
+  <p><strong>源码确认</strong>：每个隧道段的 <code>remotehost</code> 和 <code>remoteport</code> 是完全独立的参数，可以为不同的隧道配置不同的目标 IP。</p>
+  <ul>
+    <li>✅ 隧道1 连接到中转机A（公网IP-A）</li>
+    <li>✅ 隧道2 连接到中转机B（公网IP-B）</li>
+    <li>✅ 两台中转机可以位于不同的地理位置</li>
+    <li>✅ 流量会自动聚合到同一个虚拟接口</li>
+  </ul>
+
+  <h3>3. 带宽聚合原理</h3>
+  <p>MLVPN 使用<strong>加权轮询</strong>（Weighted Round-Robin）算法分配流量：</p>
+<pre>
+// 源码中的权重计算逻辑（src/mlvpn.c）
+static void mlvpn_rtun_recalc_weight()
+{
+    // 根据 bandwidth_upload 计算每条隧道的权重
+    // 权重越高，分配的流量越多
+}
+</pre>
+  <p><strong>配置示例</strong>：</p>
+<pre>
+[broadband1]
+bandwidth_upload = 10240    # 10Mbps 上行
+
+[broadband2]
+bandwidth_upload = 20480    # 20Mbps 上行
+
+[broadband3]
+bandwidth_upload = 51200    # 50Mbps 上行
+</pre>
+  <p>总带宽 = 10 + 20 + 50 = <strong>80Mbps</strong></p>
+
+  <h3>4. 故障转移行为</h3>
+  <p>当某条隧道断开时：</p>
+  <ol>
+    <li>MLVPN 检测到隧道超时（默认 60 秒）</li>
+    <li>将该隧道标记为 <code>MLVPN_DOWN</code></li>
+    <li>从聚合池中移除该隧道</li>
+    <li>流量自动分配到剩余的健康隧道</li>
+    <li>如果隧道恢复，自动重新加入聚合池</li>
+  </ol>
+  <p><strong>状态前缀说明</strong>：</p>
+  <table>
+    <thead><tr><th>前缀</th><th>含义</th></tr></thead>
+    <tbody>
+      <tr><td><code>!</code></td><td>已断开</td></tr>
+      <tr><td><code>@</code></td><td>正常运行</td></tr>
+      <tr><td><code>~</code></td><td>丢包严重（超过 loss_tolerence 阈值）</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5. 中转机方案的前提条件</h3>
+  <div class="warning">
+    要实现真正的带宽聚合，必须满足：
+    <ul>
+      <li>✅ 客户端的两条宽带必须能<strong>独立到达</strong>两台中转机</li>
+      <li>✅ 流量不能走同一条线路（否则没有聚合效果）</li>
+      <li>✅ 需要配置<strong>源路由</strong>（policy routing），确保每条宽带的流量从对应的网卡出去</li>
+    </ul>
+  </div>
+  <p><strong>源路由配置示例</strong>（客户端）：</p>
+<pre>
+# 创建路由表
+echo "101 broadband1" >> /etc/iproute2/rt_tables
+echo "102 broadband2" >> /etc/iproute2/rt_tables
+
+# 配置路由
+ip route add default via 192.168.1.1 dev eth1 table broadband1
+ip route add default via 192.168.2.1 dev eth2 table broadband2
+
+# 配置策略路由
+ip rule add from 192.168.1.100 table broadband1
+ip rule add from 192.168.2.100 table broadband2
+</pre>
+
+  <hr>
+
+  <h2>性能调优建议</h2>
+
+  <h3>重排序缓冲区</h3>
+  <table>
+    <thead><tr><th>链路数量</th><th>建议 reorder_buffer_size</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>2 条</td><td>64</td><td>默认即可</td></tr>
+      <tr><td>3-4 条</td><td>96</td><td>适度增大</td></tr>
+      <tr><td>5 条以上</td><td>128</td><td>链路越多越需要大缓冲区</td></tr>
+    </tbody>
+  </table>
+
+  <h3>超时设置</h3>
+<pre>
+# 高延迟链路（如 4G）
+timeout = 60
+
+# 低延迟光纤
+timeout = 30
+</pre>
+
+  <h3>加密开销</h3>
+  <p>如果 CPU 成为瓶颈（多条宽带加密），可以在可信网络中禁用加密：</p>
+<pre>
+cleartext_data = 1  # ⚠️ 危险！仅在可信网络使用
+</pre>
+
+  <hr>
+
+  <h2>验证聚合效果</h2>
+
+  <h3>查看隧道状态</h3>
+<pre>
+ps aux | grep mlvpn
+# 输出示例：
+# root  ... mlvpn: mlvpn0 [priv]
+# mlvpn ... mlvpn0 @broadband1 @broadband2 @broadband3
+</pre>
+
+  <h3>测试带宽</h3>
+<pre>
+# 使用 iperf3 测试
+iperf3 -c 服务器IP -t 30
+
+# 预期：带宽 ≈ 各条宽带带宽之和
+</pre>
+
+  <h3>查看流量分布</h3>
+<pre>
+# 使用 iftop 或 nload 查看各网卡流量
+iftop -i eth1
+iftop -i eth2
+</pre>
+
+  <hr>
+
+  <h2>参考资料</h2>
+  <ul>
+    <li><strong>MLVPN 源码</strong>：<a href="https://github.com/zehome/MLVPN" target="_blank">https://github.com/zehome/MLVPN</a></li>
+    <li><strong>配置手册</strong>：<code>man mlvpn.conf</code></li>
+    <li><strong>源码中的配置解析</strong>：<code>src/config.c</code></li>
+    <li><strong>隧道实现</strong>：<code>src/rtun.c</code>、<code>src/mlvpn.c</code></li>
+  </ul>
+
+  <hr>
+  <p style="text-align:center; color:#999; font-size:13px; margin-top:40px;">
+    MLVPN 中文文档 &mdash; 多条宽带聚合与中转机方案 &nbsp;|&nbsp; 基于源码确认 &nbsp;|&nbsp; 2026-07-09
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<!-- section: build_guide 编译安装完全指南 -->
+<!-- ============================================================ -->
+<div class="doc-section" id="build_guide">
+  <h1>MLVPN 编译安装、配置与运行完全指南</h1>
+  <p style="color:#888; font-size:13px;">原文来源：<a href="https://mlvpn.readthedocs.io/en/latest/" target="_blank">mlvpn.readthedocs.io</a> &nbsp;|&nbsp; 源码仓库：<a href="https://github.com/zehome/MLVPN" target="_blank">GitHub</a> &nbsp;|&nbsp; 最新版本：2.3.5</p>
+  <hr>
+
+  <!-- 第一章 -->
+  <h2>一、系统要求与依赖</h2>
+
+  <h3>1.1 支持的操作系统</h3>
+  <table>
+    <thead><tr><th>操作系统</th><th>支持状态</th></tr></thead>
+    <tbody>
+      <tr><td>Linux（Debian/Ubuntu/Arch 等）</td><td>✅ 完全支持</td></tr>
+      <tr><td>OpenBSD</td><td>✅ 完全支持</td></tr>
+      <tr><td>FreeBSD</td><td>✅ 完全支持</td></tr>
+      <tr><td>macOS（Darwin）</td><td>✅ 支持</td></tr>
+      <tr><td>Windows</td><td>❌ 不支持</td></tr>
+    </tbody>
+  </table>
+  <div class="warning">Windows 不受支持，但 MLVPN 运行在路由器上，您可以在任何操作系统上通过路由器受益于 MLVPN。</div>
+
+  <h3>1.2 编译依赖</h3>
+  <table>
+    <thead><tr><th>依赖库</th><th>说明</th><th>必需性</th></tr></thead>
+    <tbody>
+      <tr><td><strong>libev</strong></td><td>高性能异步 I/O 事件库</td><td>✅ 必需</td></tr>
+      <tr><td><strong>libsodium</strong></td><td>现代加密库（>= 0.6）</td><td>✅ 必需</td></tr>
+      <tr><td><strong>libpcap</strong></td><td>数据包捕获库</td><td>⚠️ 可选（过滤功能需要）</td></tr>
+      <tr><td><strong>autoconf</strong></td><td>自动配置工具</td><td>✅ 必需</td></tr>
+      <tr><td><strong>automake</strong></td><td>自动构建工具</td><td>✅ 必需</td></tr>
+      <tr><td><strong>make</strong></td><td>构建工具</td><td>✅ 必需</td></tr>
+      <tr><td><strong>gcc / clang</strong></td><td>C 编译器</td><td>✅ 必需</td></tr>
+      <tr><td><strong>pkg-config</strong></td><td>库依赖检测</td><td>✅ 必需</td></tr>
+    </tbody>
+  </table>
+
+  <h3>1.3 各系统安装依赖</h3>
+  <p><strong>Debian / Ubuntu：</strong></p>
+<pre>
+apt-get update
+apt-get install build-essential make autoconf automake \
+    libev-dev libsodium-dev pkg-config
+# 可选：过滤功能依赖
+apt-get install libpcap-dev
+</pre>
+  <p><strong>Arch Linux / Manjaro：</strong></p>
+<pre>
+pacman -S base-devel git libev libsodium
+# 可选：过滤功能依赖
+pacman -S libpcap
+</pre>
+  <p><strong>CentOS / RHEL / Fedora：</strong></p>
+<pre>
+# Fedora
+dnf install gcc make autoconf automake libev-devel libsodium-devel pkg-config
+# 可选：过滤功能
+dnf install libpcap-devel
+
+# CentOS / RHEL（需要 EPEL 源）
+yum install epel-release
+yum install gcc make autoconf automake libev-devel libsodium-devel pkg-config
+</pre>
+  <p><strong>FreeBSD：</strong></p>
+<pre>
+pkg install git libev libsodium
+# 可选：过滤功能
+pkg install libpcap
+</pre>
+  <p><strong>OpenBSD：</strong></p>
+<pre>
+pkg_add git autoconf automake libev libsodium
+# 可选：过滤功能
+pkg_add libpcap
+</pre>
+  <p><strong>macOS（使用 Homebrew）：</strong></p>
+<pre>
+brew install autoconf automake libev libsodium
+# 可选：过滤功能
+brew install libpcap
+</pre>
+
+  <hr>
+
+  <!-- 第二章 -->
+  <h2>二、编译安装（从源码构建）</h2>
+
+  <h3>2.1 获取源码</h3>
+<pre>
+# 方式一：从 GitHub 克隆最新版
+git clone https://github.com/zehome/MLVPN.git
+cd MLVPN
+
+# 方式二：下载特定版本
+wget https://github.com/zehome/MLVPN/archive/refs/tags/2.3.5.tar.gz
+tar -xzf 2.3.5.tar.gz
+cd MLVPN-2.3.5
+</pre>
+
+  <h3>2.2 生成构建脚本</h3>
+<pre>
+# 运行 autogen.sh 生成 configure 脚本
+./autogen.sh
+</pre>
+  <div class="tip">如果 autogen.sh 报错，确认已安装 autoconf 和 automake。</div>
+
+  <h3>2.3 配置</h3>
+<pre>
+# 基本配置（推荐）
+./configure
+
+# 启用过滤功能（需要 libpcap）
+./configure --enable-filters
+
+# 禁用过滤功能（不需要 libpcap）
+./configure --disable-filters
+
+# 指定安装路径（默认 /usr/local）
+./configure --prefix=/usr/local
+
+# 完整示例：自定义安装路径 + 启用过滤
+./configure --prefix=/usr/local --enable-filters
+</pre>
+  <p><strong>配置输出关键检查项：</strong></p>
+<pre>
+checking for libsodium... yes        ← ✅ 确认找到 libsodium
+checking for libev... yes            ← ✅ 确认找到 libev
+checking for libpcap... yes          ← ✅ 确认找到 libpcap（如果启用了过滤）
+checking host operating system... linux  ← ✅ 确认系统正确识别
+</pre>
+
+  <h3>2.4 编译</h3>
+<pre>
+# 使用所有 CPU 核心并行编译（加速）
+make -j$(nproc)
+
+# 或者简单编译
+make
+</pre>
+
+  <h3>2.5 安装</h3>
+<pre>
+# 安装到系统目录（需要 root 权限）
+make install
+
+# 验证安装
+mlvpn --version
+mlvpn --help
+</pre>
+  <p><strong>安装后的文件位置：</strong></p>
+  <table>
+    <thead><tr><th>文件</th><th>默认路径</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td><code>mlvpn</code></td><td><code>/usr/local/bin/mlvpn</code></td><td>主程序</td></tr>
+      <tr><td><code>mlvpn.conf(5)</code></td><td><code>/usr/local/share/man/man5/mlvpn.conf.5</code></td><td>配置手册页</td></tr>
+      <tr><td>示例配置</td><td><code>/usr/local/share/examples/mlvpn/</code></td><td>示例文件</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2.6 创建运行用户（推荐）</h3>
+<pre>
+# 创建专用系统用户
+adduser --quiet --system --no-create-home \
+    --home /var/run/mlvpn --shell /usr/sbin/nologin mlvpn
+</pre>
+
+  <h3>2.7 创建配置目录</h3>
+<pre>
+mkdir -p /etc/mlvpn
+chown root:root /etc/mlvpn
+chmod 755 /etc/mlvpn
+</pre>
+
+  <h3>2.8 创建日志目录</h3>
+<pre>
+mkdir -p /var/log/mlvpn
+chown mlvpn:mlvpn /var/log/mlvpn
+</pre>
+
+  <hr>
+
+  <!-- 第三章 -->
+  <h2>三、配置详解</h2>
+  <p>MLVPN 每条隧道需要两个配置文件：</p>
+  <ul>
+    <li><code>mlvpn.conf</code>：主配置文件</li>
+    <li><code>mlvpn_updown.sh</code>：状态变化回调脚本</li>
+  </ul>
+
+  <h3>3.1 mlvpn.conf 配置文件</h3>
+
+  <h4>语法说明</h4>
+  <ul>
+    <li>INI 风格，<code>[section]</code> 分段</li>
+    <li><code>#</code> 开头为注释</li>
+    <li>键值对用 <code>=</code> 分隔</li>
+    <li>字符串用双引号包裹</li>
+  </ul>
+
+  <h4>[general] 全局配置段</h4>
+<pre>
+[general]
+# ===== 必需参数 =====
+
+# 工作模式：server（服务端）或 client（客户端）
+mode = "client"
+
+# 隧道加密密码（客户端和服务端必须完全一致）
+password = "你的安全密码"
+
+# 状态变化回调脚本路径
+statuscommand = "/etc/mlvpn/mlvpn_updown.sh"
+
+# ===== 可选参数 =====
+
+# 隧道接口名称（仅 Linux 有效）
+interface_name = "mlvpn0"
+
+# 隧道类型：tun（三层路由）或 tap（二层桥接）
+tuntap = "tun"
+
+# 超时时间（秒），心跳间隔 = timeout / 2
+# 默认 30 秒，即每 15 秒发送一次心跳
+timeout = 30
+
+# 重排序缓冲区大小（数据包数）
+# 用于处理乱序数据包，推荐值：64-128
+# 设为 0 禁用重排序
+reorder_buffer_size = 64
+
+# 丢包容忍阈值（百分比）
+# 链路丢包超过此值时标记为 lossy 并从聚合中移除
+# 设为 100 或更大禁用丢包容忍
+loss_tolerence = 50
+
+# 明文数据模式（危险！仅调试用）
+# 设为 1 时数据包不加密
+cleartext_data = 0
+
+# 延迟容忍阈值（毫秒）
+# 链路延迟超过此值时标记为高延迟
+# 设为 1000 或更大禁用
+latency_tolerence = 0
+</pre>
+
+  <h4>隧道配置段</h4>
+  <p>每个隧道需要独立的配置段，段名即隧道名称：</p>
+<pre>
+# 隧道 1 配置
+[tunnel_name_1]
+# 客户端参数
+bindhost = "192.168.1.2"      # 绑定的本地地址
+remotehost = "1.2.3.4"        # 服务端公网地址
+remoteport = 5080             # 服务端端口
+
+# 服务端参数（二选一）
+bindhost = "0.0.0.0"          # 监听所有地址
+bindport = 5080               # 监听端口
+
+# 可选参数
+bandwidth_upload = 61440      # 上传带宽限制（字节/秒）
+timeout = 25                  # 覆盖全局超时设置
+fallback_only = 0             # 是否仅作为故障转移链路
+</pre>
+  <p><strong>隧道参数详解：</strong></p>
+  <table>
+    <thead><tr><th>参数</th><th>必需</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td><code>bindhost</code></td><td>否</td><td>绑定地址（IPv4）</td></tr>
+      <tr><td><code>bindport</code></td><td>服务端必需</td><td>监听端口</td></tr>
+      <tr><td><code>remotehost</code></td><td>客户端必需</td><td>远程服务器地址</td></tr>
+      <tr><td><code>remoteport</code></td><td>客户端必需</td><td>远程服务器端口</td></tr>
+      <tr><td><code>bandwidth_upload</code></td><td>否</td><td>最大上传带宽（字节/秒），0 为不限制</td></tr>
+      <tr><td><code>timeout</code></td><td>否</td><td>覆盖全局 timeout</td></tr>
+      <tr><td><code>fallback_only</code></td><td>否</td><td>1 = 仅在所有其他隧道断开时使用</td></tr>
+      <tr><td><code>bindfib</code></td><td>否</td><td>FIB 路由表（仅 FreeBSD/OpenBSD）</td></tr>
+    </tbody>
+  </table>
+
+  <h4>[filters] 过滤配置段</h4>
+<pre>
+[filters]
+# BPF 表达式语法（与 tcpdump 相同）
+# 将 SIP 流量路由到 sdsl 链路
+sdsl = udp port 5060
+# 备用：如果 sdsl 不可用，走 adsl
+adsl = udp port 5060
+</pre>
+  <div class="note">过滤器对顺序敏感，采用排他性首匹配机制。</div>
+
+  <h3>3.2 完整配置示例</h3>
+
+  <h4>服务端配置</h4>
+<pre>
+[general]
+statuscommand = "/etc/mlvpn/mlvpn_updown.sh"
+mode = "server"
+interface_name = "mlvpn0"
+tuntap = "tun"
+timeout = 30
+password = "MySecretPassword2024"
+reorder_buffer_size = 64
+loss_tolerence = 50
+
+[filters]
+
+[adsl1]
+bindhost = "0.0.0.0"
+bindport = 5080
+
+[adsl2]
+bindhost = "0.0.0.0"
+bindport = 5081
+</pre>
+
+  <h4>客户端配置</h4>
+<pre>
+[general]
+statuscommand = "/etc/mlvpn/mlvpn_updown.sh"
+mode = "client"
+interface_name = "mlvpn0"
+tuntap = "tun"
+timeout = 30
+password = "MySecretPassword2024"
+reorder_buffer_size = 64
+loss_tolerence = 50
+
+[filters]
+
+[adsl1]
+bindhost = "192.168.1.2"
+remotehost = "128.128.128.128"
+remoteport = 5080
+
+[adsl2]
+bindhost = "192.168.2.2"
+remotehost = "128.128.128.128"
+remoteport = 5081
+</pre>
+
+  <h3>3.3 mlvpn_updown.sh 回调脚本</h3>
+  <p>当隧道状态变化时，MLVPN 会调用此脚本。</p>
+  <p><strong>调用参数：</strong></p>
+  <table>
+    <thead><tr><th>参数</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td><code>$1</code></td><td>隧道接口名称</td></tr>
+      <tr><td><code>$2</code></td><td>状态名称</td></tr>
+      <tr><td><code>$3</code></td><td>隧道名称（仅 rtun_up/down 时有值）</td></tr>
+    </tbody>
+  </table>
+  <p><strong>状态类型：</strong></p>
+  <table>
+    <thead><tr><th>状态</th><th>触发时机</th></tr></thead>
+    <tbody>
+      <tr><td><code>tuntap_up</code></td><td>至少一条隧道上线</td></tr>
+      <tr><td><code>tuntap_down</code></td><td>所有隧道断开</td></tr>
+      <tr><td><code>rtun_up</code></td><td>某条远程隧道上线</td></tr>
+      <tr><td><code>rtun_down</code></td><td>某条远程隧道断开</td></tr>
+    </tbody>
+  </table>
+  <p><strong>模板脚本：</strong></p>
+<pre>
+#!/bin/bash
+error=0
+trap "error=$((error|1))" ERR
+
+tuntap_intf="$1"    # 接口名称
+newstatus="$2"      # 状态名称
+rtun="$3"           # 隧道名称
+
+[ -z "$newstatus" ] &amp;&amp; exit 1
+
+(
+  if [ "$newstatus" = "tuntap_up" ]; then
+      echo "$(date) $tuntap_intf 隧道已启动"
+      # 在此添加隧道启动后的配置命令
+      # 例如：设置 MTU、添加路由等
+
+  elif [ "$newstatus" = "tuntap_down" ]; then
+      echo "$(date) $tuntap_intf 隧道已关闭"
+      # 在此添加隧道关闭后的清理命令
+
+  elif [ "$newstatus" = "rtun_up" ]; then
+      echo "$(date) 远程隧道 [${rtun}] 已上线"
+
+  elif [ "$newstatus" = "rtun_down" ]; then
+      echo "$(date) 远程隧道 [${rtun}] 已断开"
+  fi
+) >> /var/log/mlvpn_updown.log 2>&amp;1
+
+exit $errors
+</pre>
+  <p><strong>设置权限：</strong></p>
+<pre>
+chmod 700 /etc/mlvpn/mlvpn_updown.sh
+chown root:root /etc/mlvpn/mlvpn_updown.sh
+</pre>
+
+  <hr>
+
+  <!-- 第四章 -->
+  <h2>四、运行 MLVPN</h2>
+
+  <h3>4.1 基本启动命令</h3>
+<pre>
+# 前台运行（推荐调试时使用）
+mlvpn --user mlvpn -c /etc/mlvpn/mlvpn.conf
+
+# 后台运行
+mlvpn --user mlvpn -c /etc/mlvpn/mlvpn.conf --daemon
+
+# 调试模式运行（输出详细日志）
+mlvpn --user mlvpn -c /etc/mlvpn/mlvpn.conf --debug -Dprotocol -v
+</pre>
+
+  <h3>4.2 使用 systemd 管理服务（推荐）</h3>
+  <h4>创建 systemd 服务文件</h4>
+<pre>
+tee /etc/systemd/system/mlvpn.service &gt; /dev/null &lt;&lt; 'EOF'
+[Unit]
+Description=MLVPN - Multi-Link Virtual Public Network
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/mlvpn --user mlvpn -c /etc/mlvpn/mlvpn.conf
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+EOF
+</pre>
+  <h4>启用并启动服务</h4>
+<pre>
+# 重新加载 systemd 配置
+systemctl daemon-reload
+
+# 设置开机自启
+systemctl enable mlvpn
+
+# 启动服务
+systemctl start mlvpn
+
+# 查看服务状态
+systemctl status mlvpn
+
+# 查看实时日志
+journalctl -u mlvpn -f
+</pre>
+
+  <h3>4.3 使用 OpenBSD rc.d 管理服务</h3>
+<pre>
+# 启用服务
+rcctl enable mlvpn
+
+# 启动服务
+rcctl start mlvpn
+
+# 查看状态
+rcctl check mlvpn
+</pre>
+
+  <h3>4.4 防火墙配置</h3>
+<pre>
+# Linux (iptables)
+# 允许 MLVPN 隧道端口
+iptables -A INPUT -p udp --dport 5080 -j ACCEPT
+iptables -A INPUT -p udp --dport 5081 -j ACCEPT
+
+# 限制访问来源（推荐）
+iptables -A INPUT -p udp --dport 5080 -s &lt;客户端公网IP&gt; -j ACCEPT
+iptables -A INPUT -p udp --dport 5081 -s &lt;客户端公网IP&gt; -j ACCEPT
+
+# Linux (firewalld)
+firewall-cmd --permanent --add-port=5080/udp
+firewall-cmd --permanent --add-port=5081/udp
+firewall-cmd --reload
+
+# OpenBSD (pf)
+# 在 /etc/pf.conf 中添加：
+# pass in on egress proto udp from &lt;客户端IP&gt; to any port {5080, 5081}
+pfctl -f /etc/pf.conf
+</pre>
+
+  <h3>4.5 热重载配置</h3>
+<pre>
+# 发送 SIGHUP 信号
+kill -HUP $(pidof mlvpn)
+
+# 或者使用 pkill
+pkill -HUP mlvpn
+</pre>
+  <div class="warning">注意：热重载会导致所有已建立的连接断开并重新连接。</div>
+
+  <h3>4.6 停止服务</h3>
+<pre>
+# systemd 方式
+systemctl stop mlvpn
+
+# 传统方式
+pkill mlvpn
+
+# 或发送 SIGTERM
+kill $(pidof mlvpn)
+</pre>
+
+  <hr>
+
+  <!-- 第五章 -->
+  <h2>五、验证与排查</h2>
+
+  <h3>5.1 检查运行状态</h3>
+  <h4>使用 ps 查看进程</h4>
+<pre>
+ps aux | grep mlvpn
+</pre>
+  <p><strong>输出示例：</strong></p>
+<pre>
+root  30222  30221  0 23:17 pts/8  00:00:00 mlvpn: mlvpn0 [priv]
+mlvpn 30223  30222  0 23:17 pts/8  00:00:00 mlvpn: mlvpn0 !adsl2 @adsl1
+</pre>
+  <p><strong>进程说明：</strong></p>
+  <table>
+    <thead><tr><th>进程</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td><code>[priv]</code></td><td>特权进程（root 权限），负责创建/配置隧道接口</td></tr>
+      <tr><td><code>!adsl2</code></td><td>adsl2 隧道已断开</td></tr>
+      <tr><td><code>@adsl1</code></td><td>adsl1 隧道已连接且运行中</td></tr>
+      <tr><td><code>~wifi</code></td><td>wifi 隧道已连接但丢包严重</td></tr>
+    </tbody>
+  </table>
+
+  <h4>检查隧道接口</h4>
+<pre>
+# 查看接口是否存在
+ip link show mlvpn0
+
+# 查看接口 IP 地址
+ip addr show mlvpn0
+
+# 查看接口统计信息（收发包数、字节数）
+ip -s link show mlvpn0
+</pre>
+
+  <h3>5.2 常见问题排查</h3>
+
+  <h4>问题 1：mlvpn 无法启动</h4>
+  <p><strong>症状</strong>：执行 mlvpn 命令后立即退出</p>
+<pre>
+# 1. 以调试模式运行，查看详细错误
+mlvpn --user mlvpn -c /etc/mlvpn/mlvpn.conf --debug -v
+
+# 2. 检查配置文件权限
+ls -la /etc/mlvpn/mlvpn.conf
+# 应该显示：-rw------- root root
+
+# 3. 检查回调脚本权限
+ls -la /etc/mlvpn/mlvpn_updown.sh
+# 应该显示：-rwx------ root root
+
+# 4. 修正权限
+chmod 600 /etc/mlvpn/mlvpn.conf
+chmod 700 /etc/mlvpn/mlvpn_updown.sh
+chown root:root /etc/mlvpn/mlvpn.conf
+chown root:root /etc/mlvpn/mlvpn_updown.sh
+</pre>
+
+  <h4>问题 2：隧道无法建立连接</h4>
+  <p><strong>症状</strong>：客户端无法连接到服务端</p>
+<pre>
+# 1. 检查网络连通性
+ping &lt;服务端IP&gt;
+
+# 2. 检查端口是否开放
+nc -zv &lt;服务端IP&gt; 5080
+
+# 3. 检查防火墙
+iptables -L -n | grep 5080
+
+# 4. 检查服务端是否在监听
+ss -ulnp | grep mlvpn
+</pre>
+
+  <h4>问题 3：隧道频繁断开</h4>
+  <p><strong>症状</strong>：日志中频繁出现 rtun_down / rtun_up</p>
+<pre>
+# 1. 检查链路质量
+ping -c 100 &lt;服务端IP&gt;
+
+# 2. 检查丢包率
+ping -c 1000 &lt;服务端IP&gt; | tail -3
+
+# 3. 调整超时参数
+timeout = 60  # 默认 30 秒
+
+# 4. 调整丢包容忍阈值
+loss_tolerence = 70  # 放宽容忍度
+</pre>
+
+  <h4>问题 4：吞吐量低</h4>
+  <p><strong>症状</strong>：实际带宽远低于预期</p>
+<pre>
+# 1. 检查 MTU 是否合适
+ip link show mlvpn0
+# 建议 MTU 设置为 1400（避免分片）
+
+# 2. 调整重排序缓冲区
+reorder_buffer_size = 128  # 增大缓冲区
+
+# 3. 检查加密开销（仅调试用）
+cleartext_data = 1
+</pre>
+
+  <h4>问题 5：无法创建隧道接口</h4>
+<pre>
+# 1. 检查 tun 模块是否加载
+lsmod | grep tun
+
+# 2. 手动加载 tun 模块
+modprobe tun
+
+# 3. 检查 tun 设备文件
+ls -la /dev/net/tun
+
+# 4. 如果不存在，手动创建
+mkdir -p /dev/net
+mknod /dev/net/tun c 10 200
+chmod 666 /dev/net/tun
+</pre>
+
+  <h3>5.3 查看详细日志</h3>
+<pre>
+# 查看 mlvpn_updown.sh 输出的日志
+cat /var/log/mlvpn_updown.log
+
+# 实时查看日志
+tail -f /var/log/mlvpn_updown.log
+
+# 查看系统日志中的 mlvpn 信息
+journalctl -u mlvpn -f
+</pre>
+
+  <hr>
+
+  <!-- 第六章 -->
+  <h2>六、实战示例：双 ADSL 聚合</h2>
+
+  <h3>6.1 网络拓扑</h3>
+  <div class="ascii-art">
+<pre>
+                     128.128.128.128（服务器公网IP）
+                     ┌────────────────────┐
+                     │   MLVPN 服务器      │
+                     │  （快速互联网连接）  │
+                     └──────┬──────┬──────┘
+                            │      │
+                     :5080  │      │  :5081
+                            │      │
+               ┌────────────┘      └────────────┐
+               │                                 │
+      ┌────────┴────────┐              ┌────────┴────────┐
+      │    ADSL 1       │              │    ADSL 2       │
+      │ 192.168.1.1/24  │              │ 192.168.2.1/24  │
+      └────────┬────────┘              └────────┬────────┘
+               │                                │
+               └────────────┬───────────────────┘
+                            │
+               ┌────────────┴────────────┐
+               │   MLVPN 客户端路由器     │
+               │  eth0: 192.168.0.1/24  │
+               │  mlvpn0 (隧道接口)      │
+               └────────────┬────────────┘
+                            │
+               ┌────────────┴────────────┐
+               │     局域网客户端         │
+               │    192.168.0.0/24      │
+               └─────────────────────────┘
+</pre>
+  </div>
+  <p><strong>设备 IP 规划：</strong></p>
+  <table>
+    <thead><tr><th>设备</th><th>IP 地址</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>MLVPN 服务器</td><td>128.128.128.128/32</td><td>公网 IP</td></tr>
+      <tr><td>ADSL 1 路由器</td><td>192.168.1.1/24</td><td>本地网关</td></tr>
+      <tr><td>ADSL 2 路由器</td><td>192.168.2.1/24</td><td>本地网关</td></tr>
+      <tr><td>MLVPN 客户端</td><td>192.168.1.2/24 (ADSL1)</td><td>客户端接口 1</td></tr>
+      <tr><td>MLVPN 客户端</td><td>192.168.2.2/24 (ADSL2)</td><td>客户端接口 2</td></tr>
+      <tr><td>局域网</td><td>192.168.0.0/24</td><td>客户端 LAN</td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.2 服务端配置</h3>
+  <p><strong>/etc/mlvpn/mlvpn.conf</strong></p>
+<pre>
+[general]
+statuscommand = "/etc/mlvpn/mlvpn_updown.sh"
+mode = "server"
+interface_name = "mlvpn0"
+tuntap = "tun"
+timeout = 30
+password = "MySecretPassword2024"
+reorder_buffer_size = 64
+loss_tolerence = 50
+
+[filters]
+
+[adsl1]
+bindhost = "0.0.0.0"
+bindport = 5080
+
+[adsl2]
+bindhost = "0.0.0.0"
+bindport = 5081
+</pre>
+  <p><strong>/etc/mlvpn/mlvpn_updown.sh（服务端）：</strong></p>
+<pre>
+#!/bin/bash
+error=0
+trap "error=$((error|1))" ERR
+
+tuntap_intf="$1"
+newstatus="$2"
+rtun="$3"
+
+[ -z "$newstatus" ] &amp;&amp; exit 1
+
+(
+if [ "$newstatus" = "tuntap_up" ]; then
+    echo "$(date) $tuntap_intf 隧道已启动"
+    /sbin/ip link set dev $tuntap_intf mtu 1400 up
+    /sbin/ip route add 192.168.0.0/24 dev $tuntap_intf
+    /sbin/iptables -t nat -A POSTROUTING -o eth0 -s 192.168.0.0/24 -j MASQUERADE
+elif [ "$newstatus" = "tuntap_down" ]; then
+    echo "$(date) $tuntap_intf 隧道已关闭"
+    /sbin/iptables -t nat -D POSTROUTING -o eth0 -s 192.168.0.0/24 -j MASQUERADE
+elif [ "$newstatus" = "rtun_up" ]; then
+    echo "$(date) 远程隧道 [${rtun}] 已上线"
+elif [ "$newstatus" = "rtun_down" ]; then
+    echo "$(date) 远程隧道 [${rtun}] 已断开"
+fi
+) >> /var/log/mlvpn_updown.log 2>&amp;1
+
+exit $errors
+</pre>
+  <p><strong>服务端防火墙配置：</strong></p>
+<pre>
+iptables -A INPUT -i eth0 -p udp --dport 5080 -j ACCEPT
+iptables -A INPUT -i eth0 -p udp --dport 5081 -j ACCEPT
+echo "net.ipv4.ip_forward = 1" | tee -a /etc/sysctl.conf
+sysctl -p
+</pre>
+
+  <h3>6.3 客户端配置</h3>
+  <p><strong>/etc/mlvpn/mlvpn.conf</strong></p>
+<pre>
+[general]
+statuscommand = "/etc/mlvpn/mlvpn_updown.sh"
+mode = "client"
+interface_name = "mlvpn0"
+tuntap = "tun"
+timeout = 30
+password = "MySecretPassword2024"
+reorder_buffer_size = 64
+loss_tolerence = 50
+
+[filters]
+
+[adsl1]
+bindhost = "192.168.1.2"
+remotehost = "128.128.128.128"
+remoteport = 5080
+
+[adsl2]
+bindhost = "192.168.2.2"
+remotehost = "128.128.128.128"
+remoteport = 5081
+</pre>
+  <p><strong>/etc/mlvpn/mlvpn_updown.sh（客户端）：</strong></p>
+<pre>
+#!/bin/bash
+error=0
+trap "error=$((error|1))" ERR
+
+tuntap_intf="$1"
+newstatus="$2"
+rtun="$3"
+
+[ -z "$newstatus" ] &amp;&amp; exit 1
+
+(
+if [ "$newstatus" = "tuntap_up" ]; then
+    echo "$(date) $tuntap_intf 隧道已启动"
+    /sbin/ip link set dev $tuntap_intf mtu 1400 up
+    /sbin/route add 128.128.128.128 dev $tuntap_intf
+elif [ "$newstatus" = "tuntap_down" ]; then
+    echo "$(date) $tuntap_intf 隧道已关闭"
+    /sbin/route del 128.128.128.128 dev $tuntap_intf 2&gt;/dev/null
+elif [ "$newstatus" = "rtun_up" ]; then
+    echo "$(date) 远程隧道 [${rtun}] 已上线"
+elif [ "$newstatus" = "rtun_down" ]; then
+    echo "$(date) 远程隧道 [${rtun}] 已断开"
+fi
+) >> /var/log/mlvpn_updown.log 2>&amp;1
+
+exit $errors
+</pre>
+
+  <h3>6.4 客户端源路由配置（可选，用于负载均衡）</h3>
+<pre>
+# 1. 创建路由表
+echo "101 adsl1" | tee -a /etc/iproute2/rt_tables
+echo "102 adsl2" | tee -a /etc/iproute2/rt_tables
+
+# 2. 配置路由表
+# ADSL1 路由表
+ip route add 192.168.1.0/24 dev eth0 scope link table adsl1
+ip route add default via 192.168.1.1 dev eth0 table adsl1
+
+# ADSL2 路由表
+ip route add 192.168.2.0/24 dev eth0 scope link table adsl2
+ip route add default via 192.168.2.1 dev eth0 table adsl2
+
+# 3. 配置策略路由
+ip rule add from 192.168.1.0/24 table adsl1
+ip rule add from 192.168.2.0/24 table adsl2
+
+# 4. 验证配置
+ip rule list
+ip route show table adsl1
+ip route show table adsl2
+</pre>
+
+  <h4>开机自动执行脚本 /usr/local/sbin/source_routing</h4>
+<pre>
+#!/bin/sh
+# ADSL 双链路源路由配置
+
+/sbin/ip route add 192.168.1.0/24 dev eth0 scope link table adsl1
+/sbin/ip route add default via 192.168.1.1 dev eth0 table adsl1
+/sbin/ip route add 192.168.2.0/24 dev eth0 scope link table adsl2
+/sbin/ip route add default via 192.168.2.1 dev eth0 table adsl2
+/sbin/ip rule add from 192.168.1.0/24 table adsl1
+/sbin/ip rule add from 192.168.2.0/24 table adsl2
+</pre>
+<pre>
+chmod +x /usr/local/sbin/source_routing
+</pre>
+  <p><strong>/etc/network/interfaces 配置：</strong></p>
+<pre>
+auto eth0
+iface eth0 inet static
+    address 192.168.0.1
+    netmask 255.255.255.0
+    post-up /usr/local/sbin/source_routing
+
+auto eth0:adsl1
+iface eth0:adsl1 inet static
+    address 192.168.1.2
+    netmask 255.255.255.0
+    gateway 192.168.1.1
+
+auto eth0:adsl2
+iface eth0:adsl2 inet static
+    address 192.168.2.2
+    netmask 255.255.255.0
+</pre>
+
+  <h3>6.5 启动并测试</h3>
+<pre>
+# 1. 启动服务端
+mlvpn --user mlvpn -c /etc/mlvpn/mlvpn.conf
+
+# 2. 启动客户端
+mlvpn --user mlvpn -c /etc/mlvpn/mlvpn.conf
+
+# 3. 检查状态
+ps aux | grep mlvpn
+# 期望输出：
+# root  ... mlvpn: mlvpn0 [priv]
+# mlvpn ... mlvpn: mlvpn0 @adsl1 @adsl2
+
+# 4. 检查日志
+cat /var/log/mlvpn_updown.log
+
+# 5. 测试连通性
+ping -I mlvpn0 8.8.8.8
+
+# 6. 测试带宽
+iperf3 -c 服务器IP
+</pre>
+
+  <hr>
+
+  <!-- 第七章 -->
+  <h2>七、附录</h2>
+
+  <h3>7.1 配置参数速查表</h3>
+  <table>
+    <thead><tr><th>参数</th><th>类型</th><th>必需</th><th>默认值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td><code>mode</code></td><td>string</td><td>✅</td><td>-</td><td>server / client</td></tr>
+      <tr><td><code>password</code></td><td>string</td><td>✅</td><td>-</td><td>隧道加密密码</td></tr>
+      <tr><td><code>statuscommand</code></td><td>string</td><td>✅</td><td>-</td><td>状态回调脚本路径</td></tr>
+      <tr><td><code>interface_name</code></td><td>string</td><td>否</td><td>mlvpn0</td><td>接口名称（仅 Linux）</td></tr>
+      <tr><td><code>tuntap</code></td><td>string</td><td>否</td><td>tun</td><td>tun / tap</td></tr>
+      <tr><td><code>timeout</code></td><td>int</td><td>否</td><td>30</td><td>超时时间（秒）</td></tr>
+      <tr><td><code>cleartext_data</code></td><td>int</td><td>否</td><td>0</td><td>明文模式（0=加密, 1=明文）</td></tr>
+      <tr><td><code>reorder_buffer_size</code></td><td>int</td><td>否</td><td>0</td><td>重排序缓冲区（包数）</td></tr>
+      <tr><td><code>loss_tolerence</code></td><td>int</td><td>否</td><td>100</td><td>丢包容忍（%）</td></tr>
+      <tr><td><code>latency_tolerence</code></td><td>int</td><td>否</td><td>0</td><td>延迟容忍（ms）</td></tr>
+      <tr><td><code>bindhost</code></td><td>string</td><td>否</td><td>0.0.0.0</td><td>绑定地址</td></tr>
+      <tr><td><code>bindport</code></td><td>int</td><td>服务端</td><td>-</td><td>监听端口</td></tr>
+      <tr><td><code>remotehost</code></td><td>string</td><td>客户端</td><td>-</td><td>远程地址</td></tr>
+      <tr><td><code>remoteport</code></td><td>int</td><td>客户端</td><td>-</td><td>远程端口</td></tr>
+      <tr><td><code>bandwidth_upload</code></td><td>int</td><td>否</td><td>0</td><td>上传带宽限制（字节/秒）</td></tr>
+      <tr><td><code>fallback_only</code></td><td>int</td><td>否</td><td>0</td><td>仅故障转移模式</td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.2 命令行参数速查</h3>
+  <table>
+    <thead><tr><th>参数</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td><code>-c &lt;配置文件&gt;</code></td><td>指定配置文件路径</td></tr>
+      <tr><td><code>--user &lt;用户名&gt;</code></td><td>以指定用户身份运行</td></tr>
+      <tr><td><code>--daemon</code></td><td>后台运行</td></tr>
+      <tr><td><code>--debug</code></td><td>启用调试模式</td></tr>
+      <tr><td><code>-D &lt;模块&gt;</code></td><td>指定调试模块</td></tr>
+      <tr><td><code>-v</code></td><td>详细输出</td></tr>
+      <tr><td><code>--version</code></td><td>显示版本信息</td></tr>
+      <tr><td><code>--help</code></td><td>显示帮助信息</td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.3 安全最佳实践</h3>
+  <ol>
+    <li><strong>密码安全</strong>：使用强密码（建议 16 位以上），客户端和服务端必须一致</li>
+    <li><strong>文件权限</strong>：配置文件 600，回调脚本 700</li>
+    <li><strong>运行用户</strong>：始终使用非 root 用户运行 MLVPN</li>
+    <li><strong>防火墙</strong>：仅允许信任的 IP 连接隧道端口</li>
+    <li><strong>加密</strong>：保持 <code>cleartext_data = 0</code>，不要禁用加密</li>
+    <li><strong>监控</strong>：定期检查日志，及时发现异常</li>
+  </ol>
+
+  <h3>7.4 性能调优建议</h3>
+  <table>
+    <thead><tr><th>场景</th><th>建议参数</th></tr></thead>
+    <tbody>
+      <tr><td>高延迟链路</td><td><code>timeout = 60</code>, <code>reorder_buffer_size = 128</code></td></tr>
+      <tr><td>低带宽链路</td><td><code>bandwidth_upload</code> 限制</td></tr>
+      <tr><td>VoIP 应用</td><td>启用过滤功能，将 SIP 流量指定到低延迟链路</td></tr>
+      <tr><td>负载均衡</td><td>配置源路由，根据源 IP 分配链路</td></tr>
+      <tr><td>故障转移</td><td>配置 <code>fallback_only</code> 参数</td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.5 参考资料</h3>
+  <ul>
+    <li><strong>官方文档</strong>：<a href="https://mlvpn.readthedocs.io/en/latest/" target="_blank">https://mlvpn.readthedocs.io/en/latest/</a></li>
+    <li><strong>源码仓库</strong>：<a href="https://github.com/zehome/MLVPN" target="_blank">https://github.com/zehome/MLVPN</a></li>
+    <li><strong>配置手册页</strong>：<code>man mlvpn.conf</code></li>
+    <li><strong>程序手册页</strong>：<code>man mlvpn</code></li>
+    <li><strong>OpenBSD 示例</strong>：<a href="https://dataswamp.org/~solene/2020-03-28-mlvpn.html" target="_blank">https://dataswamp.org/~solene/2020-03-28-mlvpn.html</a></li>
+  </ul>
+
+  <hr>
+  <p style="text-align:center; color:#999; font-size:13px; margin-top:40px;">
+    MLVPN 中文文档 &mdash; 基于 mlvpn.readthedocs.io 翻译整理 &nbsp;|&nbsp; 文档版本 v1.0 &nbsp;|&nbsp; 2026-07-08
+  </p>
+</div>
+
+</main>
+
+<!-- ===== JavaScript ===== -->
+<script>
+/**
+ * 显示指定 section，隐藏其他 section
+ * 同时更新左侧导航栏的 active 状态
+ */
+function showSection(sectionId) {
+  // 隐藏所有 section
+  var sections = document.querySelectorAll('.doc-section');
+  for (var i = 0; i < sections.length; i++) {
+    sections[i].classList.remove('active');
+  }
+
+  // 显示目标 section
+  var target = document.getElementById(sectionId);
+  if (target) {
+    target.classList.add('active');
+  }
+
+  // 更新导航栏 active 状态
+  var navItems = document.querySelectorAll('.nav-item');
+  for (var j = 0; j < navItems.length; j++) {
+    navItems[j].classList.remove('active');
+  }
+
+  // 根据 sectionId 匹配导航项
+  var navMap = {
+    'index': 0,
+    'what_is_mlvpn': 1,
+    'getting_started': 2,
+    'security': 3,
+    'faq': 4,
+    'linux_example': 5,
+    'filters_guide': 6,
+    'debian_packaging': 7,
+    'openbsd': 8,
+    'multi_broadband': 9,
+    'build_guide': 10
+  };
+
+  var navIndex = navMap[sectionId];
+  if (navIndex !== undefined && navItems[navIndex]) {
+    navItems[navIndex].classList.add('active');
+  }
+
+  // 滚动内容区到顶部
+  document.getElementById('content').scrollTop = 0;
+  window.scrollTo(0, 0);
+
+  // 移动端：关闭侧边栏
+  if (window.innerWidth <= 768) {
+    closeSidebar();
+  }
+}
+
+/**
+ * 切换侧边栏显示/隐藏（移动端）
+ */
+function toggleSidebar() {
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.querySelector('.overlay');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('open');
+}
+
+/**
+ * 关闭侧边栏（移动端）
+ */
+function closeSidebar() {
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.querySelector('.overlay');
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+}
+
+// 页面加载完成后，默认显示首页
+document.addEventListener('DOMContentLoaded', function() {
+  showSection('index');
+});
+</script>
+
+</body>
 </html>
